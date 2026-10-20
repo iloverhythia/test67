@@ -1,0 +1,10 @@
+build/**
+!build/.gdignore
+android/**
+.import/
+.godot/
+*.translation
+.mono/
+addons/discord_game_sdk/bin/**
+
+.vscode/settings.json

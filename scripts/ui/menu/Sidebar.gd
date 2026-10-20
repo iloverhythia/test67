@@ -1,0 +1,143 @@
+#Sidebar
+extends Panel
+
+var open:bool = false
+var open_amt:float = 1
+
+onready var pages:Array = [
+#	get_node("../Main/Results"),
+	get_node("../Main/Maps"),
+	get_node("../Main/Settings"),
+	get_node("../Main/Credits"),
+	get_node("../Main/Content"),
+	get_node("../Main/Language")
+]
+onready var buttons:Array = [
+	$L/Results,
+#	$L/MapSelect,
+	$L/Settings,
+	$L/Credits,
+	$L/ContentMgr,
+	$L/Language
+]
+var use_ver_b:Array = [
+	false,
+#	false,
+	true,
+	false,
+	false,
+	false
+]
+var hide_ver:Array = [
+	false,
+#	false,
+	false,
+	true,
+	false,
+	false
+]
+onready var smm_visibility:Dictionary = {
+	$L/Results: true,
+#	$L/MapSelect: true,
+	$L/Settings: true,
+	$L/Credits: true,
+	$L/ContentMgr: true,
+	$L/Language: false,
+	$L/Quit: true
+}
+
+func press(bi:int,q:bool=false):
+	if !q: get_node("../Press").play()
+	for i in range(pages.size()):
+		pages[i].visible = i == bi
+		buttons[i].pressed = i == bi
+	yield(get_tree(),"idle_frame")
+
+	get_node("../VersionNumber").visible = !use_ver_b[bi]
+	get_node("../VersionNumberB").visible = use_ver_b[bi]
+	if (hide_ver[bi]):
+		get_node("../VersionNumber").self_modulate = Color(1,1,1,0)
+	else:
+		get_node("../VersionNumber").self_modulate = Color(1,1,1,1)
+
+func quit():
+	get_node("../Press").play()
+	get_viewport().get_node("Menu").black_fade_target = true
+	yield(get_tree().create_timer(0.35),"timeout")
+	get_tree().quit()
+
+func _add_performance_page():
+	var main = get_node("../Main")
+	var page:Control = Control.new()
+	page.set_script(load("res://scripts/ui/menu/PerformancePage.gd"))
+	page.name = "Performance"
+	page.visible = false
+	main.add_child(page)
+
+	# clone the Language button so it matches the other sidebar buttons
+	var btn:Button = $L/Language.duplicate()
+	btn.name = "Performance"
+	btn.pressed = false
+	btn.get_node("Label").text = "Performance"
+	btn.get_node("Tex").visible = false
+	var pp_icon:Label = Label.new()
+	pp_icon.text = "pp"
+	pp_icon.align = Label.ALIGN_CENTER
+	pp_icon.valign = Label.VALIGN_CENTER
+	pp_icon.rect_position = Vector2(10, 10)
+	pp_icon.rect_size = Vector2(38, 38)
+	pp_icon.add_font_override("font", btn.get_node("Label").get("custom_fonts/font"))
+	btn.add_child(pp_icon)
+	$L.add_child(btn)
+	$L.move_child(btn, $L/Language.get_index() + 1)
+
+	pages.append(page)
+	buttons.append(btn)
+	use_ver_b.append(false)
+	hide_ver.append(false)
+
+func _ready():
+	_add_performance_page()
+	for i in range(buttons.size()):
+		buttons[i].connect("pressed",self,"press",[i])
+
+	press(0,true)
+	$Click.connect("mouse_entered",self,"_on_Sidebar", [true])
+	$L.connect("mouse_entered",self,"_on_Sidebar", [true])
+	connect("mouse_exited",self,"_on_Sidebar", [false])
+	$L/Quit.connect("pressed",self,"quit")
+
+	if Rhythia.single_map_mode:
+		for n in $L.get_children():
+			n.visible = smm_visibility.get(n,false)
+
+func _process(delta:float):
+	if open and not Rect2(get_global_rect()).has_point(get_global_mouse_position()): # mouse_exited is not reliable
+		_on_Sidebar(false)
+
+	if open == true and open_amt != 1:
+		open_amt = min(open_amt + max((1 - open_amt) * delta * 14, 0.05*delta),1)
+	elif open == false and open_amt != 0:
+		open_amt = max(open_amt + min((0 - open_amt) * delta * 12, -0.05*delta),0)
+
+	rect_size.x = 60 + (180 * open_amt)
+
+func _input(ev):
+	if (ev is InputEventScreenTouch or ev is InputEventMouseButton):
+		if ev.pressed != true: return
+		open = ev.position.x < rect_size.x and ev.position.y < rect_size.y
+		yield(get_tree(),"idle_frame")
+		get_node("Click").visible = !open
+		get_node("../SidebarClick").visible = open
+
+	if Input.is_action_just_pressed("ui_quicksettings"):
+		press(1)
+
+	if Input.is_action_just_pressed("menu_quickbar"):
+		open = true
+		get_node("Click").visible = !open
+
+func _on_Sidebar(isEntered: bool):
+	open = isEntered
+	get_node("Click").visible = !open
+	get_node("../SidebarClick").visible = open
