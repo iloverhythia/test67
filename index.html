@@ -139,7 +139,26 @@
 	<script type='text/javascript' src='index.js'></script>
 	<script type='text/javascript'>//<![CDATA[
 
-		const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":89091472,"index.wasm":19796835},"focusCanvas":true,"gdnativeLibs":[]};
+		const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":56268592,"index.wasm":19796835},"focusCanvas":true,"gdnativeLibs":[]};
+
+		// Godot 3's GLES3 (WebGL 2) renderer crashes on iPhone/iPad with
+		// "WebGL context lost", so use GLES2 there.
+		// Force a renderer with ?renderer=gles2 or ?renderer=gles3
+		(function() {
+			var ua = navigator.userAgent || '';
+			var isIOS = /iPhone|iPad|iPod/.test(ua) ||
+				(navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+			var wanted = (new URLSearchParams(window.location.search).get('renderer') || '').toLowerCase();
+			var useGLES2 = wanted ? wanted === 'gles2' : isIOS;
+			if (useGLES2) {
+				GODOT_CONFIG.args = (GODOT_CONFIG.args || []).concat(['--video-driver', 'GLES2']);
+			}
+			// Rendering at 3x pixel density uses a lot of GPU memory on phones
+			if (isIOS && window.devicePixelRatio > 2) {
+				Object.defineProperty(window, 'devicePixelRatio', { get: function() { return 2; } });
+			}
+		})();
+
 		var engine = new Engine(GODOT_CONFIG);
 
 		(function() {
