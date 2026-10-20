@@ -168,6 +168,7 @@ channel_disable_time=15.0
 
 [autoload]
 
+WebCompat="*res://scripts/WebCompat.gd"
 Globals="*res://scripts/Globals.gd"
 Online="*res://scripts/Online.gd"
 Rhythia="*res://scripts/Rhythia.gd"
@@ -187,6 +188,8 @@ gdscript/warnings/unused_signal=false
 window/size/width=1280
 window/size/height=720
 window/vsync/use_vsync=false
+window/stretch/mode.HTML5="2d"
+window/stretch/aspect.HTML5="expand"
 
 [gui]
 

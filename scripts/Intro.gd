@@ -35,6 +35,9 @@ func _ready():
 func _input(event):
 	if Input.is_action_just_pressed("pause") and can_skip:
 		get_tree().change_scene("res://scenes/init.tscn")
+	# phones have no space key, so a tap skips on the web
+	elif can_skip and OS.has_feature("HTML5") and event is InputEventScreenTouch and event.pressed:
+		get_tree().change_scene("res://scenes/init.tscn")
 
 func _process(delta):
 	$Sprite3D.rotation_degrees.z += 16 * delta

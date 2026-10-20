@@ -19,6 +19,10 @@ This copy also builds for the web (Godot 3.6.2 HTML5 export):
 Web notes:
 
 - The web build has no threads, so content loading runs on the main thread instead.
+- On iPhone and iPad it uses Godot's GLES2 renderer, because the GLES3 one crashes there
+  ("WebGL context lost"). Particle effects are switched to CPU particles for that. You can force
+  a renderer with `?renderer=gles2` or `?renderer=gles3` at the end of the URL.
+- The UI scales to fit the screen. On phones, turn the phone sideways. Tap to skip the intro.
 - Saves (settings, scores, replays) are kept in your browser's storage.
 - Adding your own maps from disk is not supported in the browser yet.
 

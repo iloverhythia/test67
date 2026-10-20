@@ -2,22 +2,19 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/road_indirect.png-6f9d6e987342a05e209b1e79502c1ff5.s3tc.stex"
-path.etc2="res://.import/road_indirect.png-6f9d6e987342a05e209b1e79502c1ff5.etc2.stex"
-path.etc="res://.import/road_indirect.png-6f9d6e987342a05e209b1e79502c1ff5.etc.stex"
+path="res://.import/road_indirect.png-6f9d6e987342a05e209b1e79502c1ff5.stex"
 metadata={
-"imported_formats": [ "s3tc", "etc2", "etc" ],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://assets/worlds/space/road_indirect.png"
-dest_files=[ "res://.import/road_indirect.png-6f9d6e987342a05e209b1e79502c1ff5.s3tc.stex", "res://.import/road_indirect.png-6f9d6e987342a05e209b1e79502c1ff5.etc2.stex", "res://.import/road_indirect.png-6f9d6e987342a05e209b1e79502c1ff5.etc.stex" ]
+dest_files=[ "res://.import/road_indirect.png-6f9d6e987342a05e209b1e79502c1ff5.stex" ]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
